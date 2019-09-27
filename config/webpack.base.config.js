@@ -1,15 +1,15 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin');
-const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
-const HappyPack = require('happypack');
-const os = require('os');
+const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin')
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
+const HappyPack = require('happypack')
+const os = require('os')
 
-const happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length });
+const happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length })
 
-const { NODE_ENV } = process.env;
+const { NODE_ENV } = process.env
 
 const plugins = [
   new HtmlWebpackPlugin({
@@ -25,45 +25,47 @@ const plugins = [
       keepClosingSlash: true,
       minifyJS: true,
       minifyCSS: true,
-      minifyURLs: true
-    }
+      minifyURLs: true,
+    },
   }),
   new FriendlyErrorsWebpackPlugin({}),
   new MiniCssExtractPlugin({
-    filename: 'chunk.[name].[contenthash:8].css'
+    filename: 'chunk.[name].[contenthash:8].css',
   }),
   new OptimizeCssAssetsWebpackPlugin({
     cssProcessPluginOptions: {
-      preset: ['default', { discardComments: { removeAll: true } }]
-    }
+      preset: ['default', { discardComments: { removeAll: true } }],
+    },
   }),
-  new CopyPlugin([{ from: path.resolve(__dirname, '../src/public'), to: '../dist/public' }]),
+  new CopyPlugin([
+    { from: 'public', to: 'public' }
+  ]),
   new HappyPack({
     id: 'babel',
     loaders: ['cache-loader', 'babel-loader?cacheDirectory'],
-    threadPool: happyThreadPool
+    threadPool: happyThreadPool,
   }),
   new HappyPack({
     id: 'tsloader',
     loaders: ['cache-loader', 'ts-loader'],
-    threadPool: happyThreadPool
+    threadPool: happyThreadPool,
   })
-];
-const entry = ['@babel/polyfill'];
+]
+const entry = ['@babel/polyfill', path.resolve(__dirname, '../src/pages/index.js')]
 module.exports = {
   entry,
   resolve: {
     mainFields: ['module', 'main', 'browser'],
     alias: {
-      root: path.resolve(__dirname, '../')
+      root: path.resolve(__dirname, '../'),
     },
-    extensions: ['.js', '.tsx', '.ts', '.jsx', '.json']
+    extensions: ['.js', '.tsx', '.ts', '.jsx', '.json'],
   },
   output: {
     filename: 'main.[hash:8].js',
     path: path.resolve(__dirname, '../dist/static'),
     chunkFilename: 'chunk.[name].[contenthash:8].js',
-    publicPath: '/'
+    publicPath: '/',
   },
   mode: NODE_ENV,
   devtool: false,
@@ -73,36 +75,36 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        use: 'happypack/loader?id=babel'
+        use: 'happypack/loader?id=babel',
       },
       {
         test: /\.(tsx|ts)?$/,
-        loader: 'happypack/loader?id=tsloader'
+        loader: 'happypack/loader?id=tsloader',
       },
       {
         test: /\.less$/,
         use: [
           MiniCssExtractPlugin.loader,
           {
-            loader: 'css-loader'
+            loader: 'css-loader',
           },
           {
             loader: 'less-loader',
             options: {
               javascriptEnabled: true,
-              sourceMap: true
-            }
+              sourceMap: true,
+            },
           }
-        ]
+        ],
       },
       {
         test: /\.css$/,
         use: [
           MiniCssExtractPlugin.loader,
           {
-            loader: 'css-loader'
+            loader: 'css-loader',
           }
-        ]
+        ],
       },
       {
         test: /\.(jpg|jpeg|bmp|svg|png|webp|gif)$/i,
@@ -111,35 +113,35 @@ module.exports = {
             loader: 'url-loader',
             options: {
               limit: 10000,
-              name: '[name].[hash:8].[ext]'
-            }
+              name: '[name].[hash:8].[ext]',
+            },
           },
           {
             loader: 'img-loader',
             options: {
               plugins: [
                 require('imagemin-gifsicle')({
-                  interlaced: false
+                  interlaced: false,
                 }),
                 require('imagemin-mozjpeg')({
                   progressive: true,
-                  arithmetic: false
+                  arithmetic: false,
                 }),
                 require('imagemin-pngquant')({
                   floyd: 0.5,
-                  speed: 2
+                  speed: 2,
                 }),
                 require('imagemin-svgo')({
-                  plugins: [{ removeTitle: true }, { convertPathData: false }]
+                  plugins: [{ removeTitle: true }, { convertPathData: false }],
                 })
-              ]
-            }
+              ],
+            },
           }
-        ]
+        ],
       }
-    ]
+    ],
   },
   performance: {
-    hints: false
-  }
-};
+    hints: false,
+  },
+}
