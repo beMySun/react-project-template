@@ -7,8 +7,7 @@
     "start": "cross-env NODE_ENV=development webpack-dev-server",
     "build": "cross-env NODE_ENV=production webpack",
     "lint": "eslint ./ --ext .js,.tsx,.ts",
-    "lint:fix": "yarn lint --fix",
-    "test": "cross-env NODE_ENV=jest jest --verbose  --coverage"
+    "lint:fix": "yarn lint --fix"
   },
   "license": "MIT",
   "dependencies": {
